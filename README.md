@@ -43,9 +43,11 @@ The demo data is the project's own fictional set from Omamobile's `docs/DEMO.md`
 
 ### Deep links
 
-Every screen has one, which is handy for screenshots and for linking a specific part of the tour:
+Every screen has one, which is handy for screenshots and for linking a specific part of the tour. Add `?theme=<id>` to link a look (any id from `js/themes.generated.js`: `tokyo-night`, `catppuccin`, `lupine`, `everforest`, …):
 
 `#lock` · `#lock/pin` · `#home/1` · `#shade` · `#drawer` · `#switcher` · `#sheet/theme` · `#sheet/about` · `#app/messages` · `#app/messages/maya` · `#app/phone` · `#app/appearance` · `#app/weather`
+
+e.g. `?theme=lupine#app/appearance` opens Appearance with the light Lupine theme applied.
 
 ## Run it
 
@@ -120,7 +122,8 @@ A few decisions worth knowing about:
 ```sh
 npm run themes       # regenerate js/themes.generated.js from the local Omarchy themes
 npm run check        # syntax-check every module; verify the precache list and imports
-npm run shots        # render every screen to shots/ with headless Chromium
+npm run shots                    # render every screen to shots/ with headless Chromium
+node tools/shots.mjs --theme=lupine home lock   # any theme
 npm run shots:phone  # the same at 720×1560, phone-only, for the manifest
 npm test             # the end-to-end suite (tools/e2e.mjs)
 ```

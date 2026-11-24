@@ -555,13 +555,14 @@
   width: 11px;
   height: 11px;
   border-radius: 50%;
-  background: color-mix(in srgb, var(--fg) 34%, transparent);
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--bg-darker) 40%, transparent);
+  background: color-mix(in srgb, var(--fg-bright) 45%, transparent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--bg-darker) 55%, transparent);
   transition: background var(--fast), transform var(--fast);
 }
 
 .page-dots button.is-active {
   background: var(--fg-bright);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--bg-darker) 55%, transparent);
 }
 
 .searchbar {

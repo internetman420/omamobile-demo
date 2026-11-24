@@ -76,6 +76,7 @@ function server() {
 }
 
 const MOBILE = process.argv.includes("--mobile")
+const themeArg = process.argv.find((a) => a.startsWith("--theme="))
 const only = process.argv.slice(2).filter((a) => !a.startsWith("--"))
 const routes = Object.entries(ROUTES).filter(([name]) => !only.length || only.includes(name))
 
@@ -86,8 +87,9 @@ const srv = await server()
 
 let failures = 0
 for (const [name, hash] of routes) {
-  const file = join(target, `${MOBILE ? `phone-${name}` : name}.png`)
-  const url = `http://localhost:${PORT}/?quiet=1${hash}`
+  const themeSlug = themeArg ? `-${themeArg.split("=")[1]}` : ""
+  const file = join(target, `${MOBILE ? `phone-${name}` : name}${themeSlug}.png`)
+  const url = `http://localhost:${PORT}/?quiet=1${themeArg ? `&${themeArg.slice(2)}` : ""}${hash}`
   const args = [
     "--headless=new",
     "--disable-gpu",

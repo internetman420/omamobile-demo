@@ -620,6 +620,9 @@ function renderHud(state) {
 // ---- boot -----------------------------------------------------------------
 
 function boot() {
+  // ?theme=<id> links a look, and sticks once used.
+  const wanted = new URLSearchParams(location.search).get("theme")
+  if (wanted && THEMES.some((t) => t.id === wanted)) store.set({ theme: wanted })
   layout()
   applyTheme(store.get().theme)
   lastTheme = store.get().theme
