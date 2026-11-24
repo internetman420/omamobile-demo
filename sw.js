@@ -3,7 +3,7 @@
 // that needs a network is not much of a demo. Navigations try the network
 // first so a new deploy is picked up, and fall back to the cache offline.
 
-const VERSION = "oma-demo-v4"
+const VERSION = "oma-demo-v5"
 const ASSETS = [
   "./",
   "index.html",

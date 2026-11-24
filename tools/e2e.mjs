@@ -453,7 +453,7 @@ async function main() {
   await sleep(1200)
   const controlledNow = await evaluate("!!navigator.serviceWorker.controller")
   check("the service worker controls the page offline", controlledNow)
-  const offline = await evaluate(`caches.open('oma-demo-v4').then((c) => c.keys()).then((k) => k.some((r) => r.url.endsWith('js/main.js')))`)
+  const offline = await evaluate(`caches.open('oma-demo-v5').then((c) => c.keys()).then((k) => k.some((r) => r.url.endsWith('js/main.js')))`)
   check("with the shell precached", offline)
   await s("Emulation.setTouchEmulationEnabled", { enabled: false })
   await s("Emulation.setDeviceMetricsOverride", { width: 1500, height: 1000, deviceScaleFactor: 1, mobile: false })

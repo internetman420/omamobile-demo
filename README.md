@@ -71,7 +71,7 @@ What makes it installable on Android, in the order Chrome checks it:
 | --- | --- |
 | Served over HTTPS | Any of the hosts above, or `omarchy` + `caddy` locally |
 | A linked manifest with `name`, `short_name`, `start_url`, `icons` (192 and 512), `display: standalone` | `manifest.webmanifest` |
-| A registered service worker with a fetch handler | `sw.js`, registered on load; precaches the whole shell and uses stale-while-revalidate |
+| A registered service worker with a fetch handler | `sw.js`, registered on load; precaches the whole shell, revalidates in the background, and reloads once when a new version takes over |
 | Maskable icon for the adaptive launcher | `assets/icons/maskable-512.png` |
 | Screenshots for the richer install sheet | `assets/screenshots/phone-*.png` (regenerate with `npm run shots:phone`) |
 
@@ -111,7 +111,7 @@ tools/                serve, theme generator, syntax check, screenshots, e2e
 A few decisions worth knowing about:
 
 - **No framework, no bundler.** A demo of a fast shell should load fast and be readable; ES modules and a 200-line hyperscript are enough. Nothing to install to run it.
-- **One store, redraw what changed.** Interactions write to `js/store.js`; a microtask-batched subscription rebuilds the layers. Focus and text selection are captured and restored across redraws so typing survives.
+- **One store, redraw what changed.** Interactions write to `js/store.js`; a microtask-batched subscription redraws only the layers whose inputs changed, and entrance animations fire on real transitions rather than on every redraw (a phone that flickers while you look at it is not a convincing phone). Focus and text selection are captured and restored across redraws so typing survives.
 - **Themes are Omarchy's.** `tools/build-themes.mjs` reads `/usr/share/omarchy/themes/*/colors.toml` into CSS custom properties. Every surface is derived from those tokens with `color-mix()`, so a new theme needs no new CSS. The wallpaper is an SVG landscape generated from the same palette.
 - **The screen is 720×1560** — half the Pixel 7 Pro's panel — and is scaled to fit. On a handset the frame disappears and the demo fills the display, exactly as the installed app does.
 

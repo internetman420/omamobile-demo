@@ -650,7 +650,16 @@ function boot() {
   })
 
   // Offline: register the service worker that precaches the whole phone.
+  // A new version takes over on its own; the first visit does not reload
+  // (it had no controller to replace).
   if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
+    const hadController = !!navigator.serviceWorker.controller
+    let refreshed = false
+    navigator.serviceWorker.addEventListener("controllerchange", () => {
+      if (!hadController || refreshed) return
+      refreshed = true
+      location.reload()
+    })
     window.addEventListener("load", () => {
       navigator.serviceWorker.register("sw.js").catch(() => {
         /* a demo without offline still works */
