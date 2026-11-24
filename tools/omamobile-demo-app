@@ -1,0 +1,99 @@
+#!/usr/bin/env bash
+# SPDX-License-Identifier: MIT
+# Opens the Omamobile demo as an app on Omarchy: a loopback static server, then
+# Chromium in app mode in a phone-shaped window.
+#
+#   tools/omamobile-demo-app            # the window
+#   tools/omamobile-demo-app --install  # a launcher entry and icons in ~/.local
+#
+# The demo itself is nothing but files; this script is only the window and the
+# server around it.
+
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+PORT="${OMA_DEMO_PORT:-4174}"
+# A named loopback origin, so Chromium's app window has a stable WM_CLASS
+# (chrome-omamobile.localhost__-Default) for the window rule below.
+HOST="${OMA_DEMO_HOST:-omamobile.localhost}"
+URL="http://${HOST}:${PORT}/#home"
+STATE_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/omamobile-demo"
+PROFILE="${XDG_DATA_HOME:-$HOME/.local/share}/omamobile-demo/chromium"
+APPLICATIONS="${XDG_DATA_HOME:-$HOME/.local/share}/applications"
+ICONS="${XDG_DATA_HOME:-$HOME/.local/share}/icons/hicolor"
+
+install_entry() {
+  mkdir -p "$APPLICATIONS" "$ICONS/scalable/apps" "$ICONS/192x192/apps" "$ICONS/512x512/apps"
+  cp "$ROOT/assets/icons/icon.svg" "$ICONS/scalable/apps/omamobile-demo.svg"
+  cp "$ROOT/assets/icons/icon-192.png" "$ICONS/192x192/apps/omamobile-demo.png"
+  cp "$ROOT/assets/icons/icon-512.png" "$ICONS/512x512/apps/omamobile-demo.png"
+  cat >"$APPLICATIONS/omamobile-demo.desktop" <<DESKTOP
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Omamobile Demo
+GenericName=Phone shell demo
+Comment=Omarchy's phone shell and apps, in a window
+Exec=$ROOT/tools/omamobile-demo-app
+Icon=omamobile-demo
+Terminal=false
+Categories=Development;Utility;
+Keywords=omamobile;omarchy;phone;pixel;demo;pwa;
+StartupNotify=true
+StartupWMClass=omamobile-demo
+DESKTOP
+  command -v update-desktop-database >/dev/null && update-desktop-database "$APPLICATIONS" 2>/dev/null || true
+  command -v gtk-update-icon-cache >/dev/null && gtk-update-icon-cache -q -t "$ICONS" 2>/dev/null || true
+  echo "Installed: $APPLICATIONS/omamobile-demo.desktop"
+}
+
+if [[ "${1:-}" == "--install" ]]; then
+  install_entry
+  exit 0
+fi
+
+if ! command -v chromium >/dev/null && ! command -v google-chrome-stable >/dev/null && ! command -v google-chrome >/dev/null; then
+  echo "omamobile-demo: no Chromium found to host the app window" >&2
+  exit 1
+fi
+BROWSER="$(command -v chromium || command -v google-chrome-stable || command -v google-chrome)"
+
+mkdir -p "$STATE_DIR" "$PROFILE"
+
+# One server per port, reused by every launch.
+if ! curl -fsS --max-time 1 "http://127.0.0.1:${PORT}/" >/dev/null 2>&1; then
+  # Detached from this launcher's process group, so closing the window does
+  # not stop the server other windows may still be using.
+  setsid nohup node "$ROOT/tools/serve.mjs" "$PORT" >>"$STATE_DIR/server.log" 2>&1 < /dev/null &
+  for _ in $(seq 1 60); do
+    curl -fsS --max-time 1 "http://127.0.0.1:${PORT}/" >/dev/null 2>&1 && break
+    sleep 0.1
+  done
+fi
+
+# A phone-shaped window that fits this screen: as tall as the desktop allows,
+# at the Pixel 7 Pro's proportions, so the demo is (very nearly) life size.
+WIDTH=452
+HEIGHT=972
+if command -v hyprctl >/dev/null; then
+  read -r SCREEN_W SCREEN_H < <(hyprctl monitors -j 2>/dev/null | python3 -c 'import json,sys
+try:
+  m = next(x for x in json.load(sys.stdin) if x["focused"])
+  print(int(m["width"] / m["scale"]), int(m["height"] / m["scale"]))
+except Exception:
+  print(0, 0)' 2>/dev/null || echo "0 0")
+  if [[ "${SCREEN_W:-0}" -gt 0 ]]; then
+    HEIGHT=$((SCREEN_H - 76))
+    [[ $HEIGHT -gt 1000 ]] && HEIGHT=1000
+    [[ $HEIGHT -lt 320 ]] && HEIGHT=320
+    WIDTH=$(python3 -c "print(round($HEIGHT * 720 / 1560))")
+  fi
+fi
+
+exec "$BROWSER" \
+  --app="$URL" \
+  --window-size="${WIDTH},${HEIGHT}" \
+  --user-data-dir="$PROFILE" \
+  --no-first-run \
+  --no-default-browser-check \
+  --hide-crash-restore-bubble

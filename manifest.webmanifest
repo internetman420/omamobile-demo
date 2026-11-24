@@ -1,0 +1,102 @@
+{
+  "name": "Omamobile demo",
+  "short_name": "Omamobile",
+  "description": "An unofficial, interactive recreation of Omamobile: the phone profile of Omarchy's shell on a Pixel 7 Pro, with its apps, widgets, quick settings and themes.",
+  "id": "./",
+  "start_url": "./#home",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": [
+    "standalone",
+    "fullscreen",
+    "minimal-ui"
+  ],
+  "background_color": "#0e0e14",
+  "theme_color": "#0e0e14",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": [
+    "utilities",
+    "productivity",
+    "developer"
+  ],
+  "icons": [
+    {
+      "src": "assets/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icons/maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "prefer_related_applications": false,
+  "screenshots": [
+    {
+      "src": "assets/screenshots/phone-home.png",
+      "sizes": "720x1560",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Home screens with widgets, the dock and the app search"
+    },
+    {
+      "src": "assets/screenshots/phone-shade.png",
+      "sizes": "720x1560",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Notifications and quick settings, pulled down"
+    },
+    {
+      "src": "assets/screenshots/phone-messages.png",
+      "sizes": "720x1560",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Messages, on the project's fictional demo data"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Messages",
+      "short_name": "Messages",
+      "url": "./#app/messages",
+      "icons": [
+        {
+          "src": "assets/icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Quick settings",
+      "short_name": "Settings",
+      "url": "./#shade",
+      "icons": [
+        {
+          "src": "assets/icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Themes",
+      "short_name": "Themes",
+      "url": "./#sheet/theme",
+      "icons": [
+        {
+          "src": "assets/icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ]
+}

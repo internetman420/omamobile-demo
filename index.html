@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en" data-mode="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1" />
+    <title>Omamobile demo — Omarchy on a Pixel 7 Pro</title>
+    <meta
+      name="description"
+      content="An unofficial, interactive browser recreation of Omamobile: the phone profile of Omarchy's shell, with its apps, widgets, quick settings and themes."
+    />
+    <meta name="theme-color" content="#0e0e14" />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Omamobile" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" href="assets/icons/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="assets/icons/icon-180.png" />
+    <link rel="stylesheet" href="css/tokens.css" />
+    <link rel="stylesheet" href="css/device.css" />
+    <link rel="stylesheet" href="css/shell.css" />
+    <link rel="stylesheet" href="css/lock.css" />
+    <link rel="stylesheet" href="css/apps.css" />
+  </head>
+  <body>
+    <div class="stage" id="stage">
+      <div class="device-wrap">
+        <div class="device">
+          <div class="screen" id="screen" role="application" aria-label="Omamobile demo on a Pixel 7 Pro">
+            <div class="wallpaper" id="wallpaper"></div>
+            <div class="layer" id="home-layer"></div>
+            <div class="layer" id="app-layer"></div>
+            <div class="layer" id="pill-layer"></div>
+            <div class="layer" id="drawer-layer"></div>
+            <div class="layer" id="switcher-layer"></div>
+            <div class="layer" id="status-layer"></div>
+            <div class="layer" id="shade-layer"></div>
+            <div class="layer" id="lock-layer"></div>
+            <div class="layer" id="toast-layer"></div>
+            <div class="layer" id="sheet-layer"></div>
+            <div class="layer" id="screen-off"></div>
+          </div>
+        </div>
+      </div>
+      <aside class="hud" id="hud" aria-label="About this demo"></aside>
+    </div>
+    <div id="live-region" class="sr-only" role="status" aria-live="polite"></div>
+    <noscript>
+      <p style="padding: 24px; font-family: sans-serif">
+        This demo is a phone-sized JavaScript app; it needs JavaScript switched on.
+      </p>
+    </noscript>
+    <script type="module" src="js/main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,303 @@
+/* SPDX-License-Identifier: MIT
+   The lock screen: clock and glance, the notification stack, and the PIN pad
+   that rises when you ask to unlock. */
+
+.lock {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  padding: calc(var(--status-h) + 26px) 30px 26px;
+  color: var(--fg-bright);
+  overflow: hidden;
+}
+
+.lock__scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--bg-darker) 48%, transparent) 0%,
+    color-mix(in srgb, var(--bg-darker) 8%, transparent) 34%,
+    color-mix(in srgb, var(--bg-darker) 78%, transparent) 82%,
+    color-mix(in srgb, var(--bg-darker) 92%, transparent) 100%
+  );
+  pointer-events: none;
+}
+
+.lock > *:not(.lock__scrim):not(.pin) {
+  position: relative;
+}
+
+.lock__glance {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.lock__clock {
+  font-family: var(--font-mono);
+  font-size: 132px;
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+  color: var(--fg-bright);
+  text-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
+}
+
+.lock__date {
+  font-size: 27px;
+  color: var(--fg-mid);
+  margin-top: 10px;
+}
+
+.lock__weather {
+  margin-left: auto;
+  text-align: right;
+  font-family: var(--font-mono);
+  color: var(--fg-bright);
+  padding-top: 8px;
+}
+
+.lock__weather .temp {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 40px;
+  justify-content: flex-end;
+}
+
+.lock__weather .place {
+  font-size: 19px;
+  color: var(--fg-mid);
+  margin-top: 4px;
+}
+
+.lock__unread {
+  margin-top: 26px;
+  font-size: 21px;
+  color: var(--fg-mid);
+}
+
+.lock__notifications {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 400px;
+  overflow: hidden;
+  padding-top: 18px;
+}
+
+.lock__notifications .notification {
+  backdrop-filter: blur(20px) saturate(120%);
+  background: color-mix(in srgb, var(--bg-darker) 58%, transparent);
+  border-color: color-mix(in srgb, var(--fg) 18%, transparent);
+  animation: lock-note-in var(--medium) var(--ease) backwards;
+}
+
+.lock__notifications .notification:nth-child(2) {
+  animation-delay: 60ms;
+}
+
+.lock__notifications .notification:nth-child(3) {
+  animation-delay: 120ms;
+}
+
+@keyframes lock-note-in {
+  from {
+    transform: translateY(16px);
+    opacity: 0;
+  }
+}
+
+.lock__more {
+  font-size: 19px;
+  color: var(--fg-mid);
+  text-align: center;
+  padding: 4px;
+}
+
+.lock__hint {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 18px 0 2px;
+  font-size: 20px;
+  color: var(--fg-mid);
+  animation: hint-bob 2.6s var(--ease) infinite;
+}
+
+@keyframes hint-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.lock__media {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 14px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--bg-darker) 58%, transparent);
+  border: 1px solid color-mix(in srgb, var(--fg) 16%, transparent);
+  font-size: 21px;
+  color: var(--fg-bright);
+}
+
+.lock__media small {
+  display: block;
+  color: var(--fg-mid);
+  font-size: 18px;
+}
+
+/* ---- PIN pad ------------------------------------------------------------- */
+
+.pin {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  background:
+    radial-gradient(120% 60% at 50% 100%, color-mix(in srgb, var(--bg) 55%, transparent), transparent 70%),
+    color-mix(in srgb, var(--bg-darker) 92%, transparent);
+  backdrop-filter: blur(30px) saturate(130%);
+  animation: pin-in var(--medium) var(--ease);
+  padding-bottom: 18px;
+}
+
+@keyframes pin-in {
+  from {
+    transform: translateY(40px);
+    opacity: 0;
+  }
+}
+
+.pin__top {
+  text-align: center;
+  padding: 0 30px;
+  margin-bottom: 6px;
+}
+
+.pin__lock {
+  display: flex;
+  justify-content: center;
+  color: var(--fg-mid);
+  margin-bottom: 14px;
+}
+
+.pin__title {
+  font-size: 26px;
+  color: var(--fg-bright);
+}
+
+.pin__sub {
+  font-size: 20px;
+  color: var(--fg-dim);
+  margin-top: 6px;
+}
+
+.pin__dots {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin: 24px 0 26px;
+}
+
+.pin__dot {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid var(--fg-mid);
+  transition: background var(--fast), border-color var(--fast), transform var(--fast);
+}
+
+.pin__dot.is-filled {
+  background: var(--fg-bright);
+  border-color: var(--fg-bright);
+  transform: scale(1.08);
+}
+
+.pin.is-wrong .pin__dots {
+  animation: shake 380ms var(--ease);
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20% {
+    transform: translateX(-12px);
+  }
+  40% {
+    transform: translateX(11px);
+  }
+  60% {
+    transform: translateX(-7px);
+  }
+  80% {
+    transform: translateX(4px);
+  }
+}
+
+.pin__pad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px 34px;
+  padding: 10px 46px 0;
+}
+
+.pin__key {
+  height: 116px;
+  border-radius: 58px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  background: color-mix(in srgb, var(--fg) 9%, transparent);
+  border: 1px solid color-mix(in srgb, var(--fg) 12%, transparent);
+  font-family: var(--font-mono);
+  font-size: 42px;
+  color: var(--fg-bright);
+  transition: transform 90ms, background 120ms;
+}
+
+.pin__key small {
+  font-family: var(--font-ui);
+  font-size: 14px;
+  letter-spacing: 0.16em;
+  color: var(--fg-dim);
+}
+
+.pin__key:active,
+.pin__key.is-pressed {
+  background: color-mix(in srgb, var(--accent) 26%, transparent);
+  transform: scale(0.96);
+}
+
+.pin__key--flat {
+  background: none;
+  border-color: transparent;
+  color: var(--fg-mid);
+}
+
+.pin__key--fingerprint .icon {
+  color: var(--accent);
+}
+
+.pin__cancel {
+  align-self: center;
+  margin-top: 18px;
+  font-size: 20px;
+  color: var(--fg-dim);
+  padding: 12px 20px;
+}

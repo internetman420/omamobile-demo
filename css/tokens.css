@@ -1,0 +1,143 @@
+/* SPDX-License-Identifier: MIT
+   Tokens, reset and typography.
+
+   The colour values below are placeholders for the Tokyo Night theme; JS
+   overwrites every one of them from the Omarchy theme the visitor picks
+   (js/theme.js). Everything else is derived from those tokens with color-mix()
+   so a new theme never needs new CSS. */
+
+:root {
+  --bg: #1a1b26;
+  --bg-dark: #13141c;
+  --bg-darker: #0e0e14;
+  --bg-light: #24283b;
+  --fg: #a9b1d6;
+  --fg-bright: #c0caf5;
+  --fg-mid: #b4bee6;
+  --fg-dim: #565f89;
+  --muted: #414868;
+  --accent: #7aa2f7;
+  --selection: #292e42;
+  --red: #f7768e;
+  --green: #9ece6a;
+  --yellow: #e0af68;
+  --orange: #eb927b;
+  --blue: #7aa2f7;
+  --cyan: #449dab;
+  --magenta: #ad8ee6;
+  --brown: #75493d;
+  --bright-red: #ff7a93;
+  --bright-green: #b9f27c;
+  --bright-yellow: #ff9e64;
+  --bright-blue: #7da6ff;
+  --bright-cyan: #0db9d7;
+  --bright-magenta: #bb9af7;
+  --on-accent: #101014;
+
+  /* Derived surfaces. */
+  --panel: color-mix(in srgb, var(--bg-dark) 88%, transparent);
+  --panel-solid: color-mix(in srgb, var(--bg-dark) 96%, var(--bg));
+  --panel-raised: color-mix(in srgb, var(--bg-light) 70%, transparent);
+  --hairline: color-mix(in srgb, var(--fg) 16%, transparent);
+  --hairline-strong: color-mix(in srgb, var(--fg) 30%, transparent);
+  --scrim: color-mix(in srgb, var(--bg-darker) 62%, transparent);
+  --accent-soft: color-mix(in srgb, var(--accent) 16%, transparent);
+
+  /* The phone's type scale, in design pixels (the screen is 720×1560). */
+  --t-display: 104px; /* lock-screen clock */
+  --t-title: 30px;
+  --t-body: 26px;
+  --t-label: 22px;
+  --t-small: 20px;
+  --t-tiny: 17px;
+
+  --radius: 10px;
+  --radius-sm: 6px;
+  --radius-lg: 20px;
+
+  --font-ui: "Inter", "Noto Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "DejaVu Sans Mono", "Noto Sans Mono", monospace;
+
+  --status-h: 60px;
+  --pill-strip: 44px;
+
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --fast: 160ms;
+  --medium: 260ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --fast: 1ms;
+    --medium: 1ms;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overscroll-behavior: none;
+}
+
+body {
+  background: var(--bg-darker);
+  color: var(--fg);
+  font-family: var(--font-ui);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  overflow: hidden;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.icon {
+  display: block;
+  flex: none;
+}
+
+.icon-wrap {
+  display: contents;
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-variant-ligatures: none;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.spacer {
+  flex: 1;
+}

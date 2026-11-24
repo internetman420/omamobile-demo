@@ -1,0 +1,18 @@
+{
+  "name": "omamobile-demo",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "An unofficial, interactive browser recreation of Omamobile's phone shell, built to install as a PWA.",
+  "license": "MIT",
+  "scripts": {
+    "dev": "node tools/serve.mjs",
+    "app": "tools/omamobile-demo-app",
+    "install-app": "tools/omamobile-demo-app --install",
+    "themes": "node tools/build-themes.mjs",
+    "check": "node tools/check.mjs",
+    "shots": "node tools/shots.mjs",
+    "shots:phone": "node tools/shots.mjs --mobile home shade messages",
+    "test": "node tools/e2e.mjs"
+  }
+}
