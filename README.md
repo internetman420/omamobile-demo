@@ -4,7 +4,9 @@ An unofficial, interactive recreation of **[Omamobile](https://github.com/derekr
 
 It is a phone in a browser tab: the shell, the home screens and widgets, quick settings, the app drawer, the recents switcher, the lock screen and its PIN pad, and a working set of apps. It recolours itself from Omarchy's real theme tokens, and it runs offline once installed.
 
-![The home screen, with widgets, the dock and the search bar](shots/home.png)
+<p align="center">
+  <img src="assets/screenshots/phone-home.png" width="330" alt="The home screen: widgets, the dock and the app search" />
+</p>
 
 ## What this is, and what it is not
 
@@ -21,8 +23,9 @@ The demo data is the project's own fictional set from Omamobile's `docs/DEMO.md`
 - **In a browser tab:** `npm run dev` and open <http://localhost:4173>. On a wide screen there is a side panel with the themes and every shortcut.
 
 <p align="center">
-  <img src="assets/screenshots/phone-shade.png" width="30%" alt="Notifications and quick settings" />
-  <img src="assets/screenshots/phone-messages.png" width="30%" alt="Messages" />
+  <img src="assets/screenshots/phone-shade.png" width="240" alt="Notifications and quick settings" />
+  &nbsp;&nbsp;
+  <img src="assets/screenshots/phone-messages.png" width="240" alt="Messages" />
 </p>
 
 ### Gestures
@@ -124,6 +127,9 @@ npm run themes       # regenerate js/themes.generated.js from the local Omarchy 
 npm run check        # syntax-check every module; verify the precache list and imports
 npm run shots                    # render every screen to shots/ with headless Chromium
 node tools/shots.mjs --theme=lupine home lock   # any theme
+
+# shots/ is local only (gitignored): the images in this README are the phone
+# renders in assets/screenshots/, regenerated with `npm run shots:phone`.
 npm run shots:phone  # the same at 720×1560, phone-only, for the manifest
 npm test             # the end-to-end suite (tools/e2e.mjs)
 ```
