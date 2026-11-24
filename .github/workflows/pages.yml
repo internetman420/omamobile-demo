@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: MIT
-# Publishes the demo to GitHub Pages. There is nothing to build: the site is
-# static files, so this only has to upload them. Enable Pages → Source:
-# GitHub Actions in the repository settings once.
+# Publishes the demo to GitHub Pages. There is nothing to build: this collects
+# the static site into a directory and uploads it. Enable Pages → Source:
+# GitHub Actions in the repository settings once (the first run needs it).
 name: Deploy to GitHub Pages
 
 on:
@@ -26,9 +26,16 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+
+      - name: Collect the site
+        run: |
+          mkdir -p _site
+          cp -R index.html manifest.webmanifest sw.js .nojekyll css js assets _site/
+          cp README.md LICENSE _site/ 2>/dev/null || true
+
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          path: _site
       - id: deployment
         uses: actions/deploy-pages@v4
