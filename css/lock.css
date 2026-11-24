@@ -92,6 +92,9 @@
   backdrop-filter: blur(20px) saturate(120%);
   background: color-mix(in srgb, var(--bg-darker) 58%, transparent);
   border-color: color-mix(in srgb, var(--fg) 18%, transparent);
+}
+
+.lock__notifications--enter .notification {
   animation: lock-note-in var(--medium) var(--ease) backwards;
 }
 

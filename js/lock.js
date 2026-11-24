@@ -131,7 +131,7 @@ function pinPad(state) {
   )
 }
 
-export function renderLock(el, state) {
+export function renderLock(el, state, { enter = false } = {}) {
   if (state.unlocked) {
     fill(el)
     return
@@ -165,7 +165,7 @@ export function renderLock(el, state) {
       ),
       h(
         "div",
-        { class: "lock__notifications", id: "lock-notifications" },
+        { class: `lock__notifications${enter ? " lock__notifications--enter" : ""}`, id: "lock-notifications" },
         shown.map((n) =>
           notificationCard(n, {
             onOpen: () => {

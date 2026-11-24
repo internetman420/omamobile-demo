@@ -6,7 +6,7 @@ import { h, fill } from "./util.js"
 import { icon } from "./icons.js"
 import { openNotification, dismissToast } from "./store.js"
 
-export function renderToasts(el, state) {
+export function renderToasts(el, state, { entering = new Set() } = {}) {
   fill(
     el,
     h(
@@ -16,7 +16,7 @@ export function renderToasts(el, state) {
         h(
           "div",
           {
-            class: "toast",
+            class: `toast${entering.has(n.id) ? " toast--enter" : ""}`,
             role: "button",
             tabindex: "0",
             onclick: () => openNotification(n),

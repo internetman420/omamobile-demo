@@ -1111,6 +1111,9 @@
   background: var(--panel-solid);
   border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--hairline));
   box-shadow: 0 24px 48px -24px rgba(0, 0, 0, 0.9);
+}
+
+.toast--enter {
   animation: toast-in var(--medium) var(--ease);
 }
 
@@ -1128,6 +1131,9 @@
   inset: 0;
   background: var(--scrim);
   backdrop-filter: blur(4px);
+}
+
+.sheet-backdrop--enter {
   animation: fade-in var(--fast) var(--ease);
 }
 
@@ -1147,6 +1153,9 @@
   border-radius: 26px 26px 0 0;
   border-top: 2px solid color-mix(in srgb, var(--accent) 40%, var(--hairline));
   padding: 10px 24px calc(28px + env(safe-area-inset-bottom, 0px));
+}
+
+.sheet--enter {
   animation: sheet-in var(--medium) var(--ease);
 }
 

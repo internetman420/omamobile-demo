@@ -8,10 +8,12 @@ import { avatar } from "./ui.js"
 import { store, setTheme, toggleWallpaper, openThread, demo } from "./store.js"
 import { THEMES, themeById, swatchFor } from "./theme.js"
 
+let entering = false
+
 function shell({ title, lead, body, actions, onClose, label = "Sheet" }) {
   return h(
     "div",
-    { class: "sheet-backdrop", id: "sheet-backdrop", onclick: (event) => event.target === event.currentTarget && onClose(), role: "dialog", "aria-label": label },
+    { class: `sheet-backdrop${entering ? " sheet-backdrop--enter" : ""}`, id: "sheet-backdrop", onclick: (event) => event.target === event.currentTarget && onClose(), role: "dialog", "aria-label": label },
     h(
       "div",
       { class: "sheet", role: "document" },
@@ -241,8 +243,9 @@ function installSheet(sheet, close) {
   })
 }
 
-export function renderSheets(el, state) {
+export function renderSheets(el, state, { enter = false } = {}) {
   const sheet = state.sheet
+  entering = enter
   if (!sheet) {
     fill(el)
     return

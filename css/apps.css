@@ -11,6 +11,10 @@
   background: var(--bg);
   padding-top: var(--status-h);
   padding-bottom: var(--pill-strip);
+}
+
+/* Entrance plays when an app opens, not every time its screen redraws. */
+.app--enter {
   animation: app-in var(--medium) var(--ease);
 }
 
@@ -390,6 +394,11 @@
   width: 100%;
   text-align: left;
   border-bottom: 1px solid var(--hairline);
+}
+
+.call-row__main {
+  flex: 1;
+  min-width: 0;
 }
 
 .call-row__name {

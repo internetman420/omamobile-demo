@@ -24,10 +24,14 @@ function duration(seconds) {
   return m ? `${m}m ${s}s` : `${s}s`
 }
 
+// Set by renderApp: true only when a different app is being shown, so a redraw
+// of the same screen never replays the entrance animation.
+let entering = false
+
 function frame({ title, subtitle, actions, body, back = true, id }) {
   return h(
     "div",
-    { class: "app", id: `app-${id}` },
+    { class: `app${entering ? " app--enter" : ""}`, id: `app-${id}` },
     h(
       "div",
       { class: "app__header" },
@@ -225,7 +229,7 @@ function recentsView(state) {
         avatar(contact, { name }),
         h(
           "div",
-          { style: { minWidth: "0" } },
+          { class: "call-row__main" },
           h("div", { class: `call-row__name${isMissed && !call.seen ? " is-missed" : ""}` }, name),
           h(
             "div",
@@ -736,12 +740,13 @@ const RENDERERS = {
   placeholder: placeholderApp,
 }
 
-export function renderApp(el, state) {
+export function renderApp(el, state, { enter = false } = {}) {
   if (!state.app) {
     fill(el)
     return
   }
   const render = RENDERERS[state.app.id] || placeholderApp
+  entering = enter
   fill(el, render(state))
   if (state.app.id === "phone") markCallsSeenDebounced()
 }

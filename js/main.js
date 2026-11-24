@@ -17,6 +17,7 @@ import { renderShade } from "./shade.js"
 import { renderLock, pressDigit, pressBackspace, openPin } from "./lock.js"
 import { renderToasts } from "./toasts.js"
 import { renderSheets } from "./sheets.js"
+import { unreadCount, missedCalls } from "./store.js"
 
 const L = {
   stage: document.getElementById("stage"),
@@ -87,6 +88,25 @@ function restoreFocus() {
   }
 }
 
+// A layer redraws only when the state it reads has changed. Rebuilding every
+// layer on every keystroke of the state was both wasteful and visibly wrong:
+// a redraw restarts CSS animations, so the phone flickered as notifications
+// expired or a call was marked seen.
+const drawn = new Map()
+/** True when a layer's inputs changed — or when it has to play an entrance. */
+function needsRedraw(layer, signature, enter = false) {
+  if (!enter && drawn.get(layer) === signature) return false
+  drawn.set(layer, signature)
+  return true
+}
+const of = JSON.stringify
+const tileSignature = (s) => s.tiles.map((t) => (t.on ? "1" : "0")).join("") + `|${s.battery.level}|${s.battery.charging}`
+
+let lastAppKey = null
+let lastUnlocked = null
+let lastSheetKind = null
+const seenToasts = new Set()
+
 function render(state) {
   if (state.theme !== lastTheme) {
     applyTheme(state.theme)
@@ -100,16 +120,42 @@ function render(state) {
     lastWallpaper = wpKey
   }
 
-  renderStatusBar(L.status, state)
-  renderHome(L.home, state)
-  renderApp(L.app, state)
-  renderPill(L.pill, state)
-  renderDrawer(L.drawer, state, { focus: state.drawer })
-  renderSwitcher(L.switcher, state)
-  renderShade(L.shade, state, { setShade })
-  renderLock(L.lock, state)
-  renderToasts(L.toasts, state)
-  renderSheets(L.sheets, state)
+  const unread = unreadCount()
+  const missed = missedCalls().length
+  const appKey = state.app ? `${state.app.id}:${of(state.app.params || {})}` : null
+  const enteringApp = appKey !== null && appKey !== lastAppKey
+  lastAppKey = appKey
+  const enteringLock = state.unlocked === false && lastUnlocked !== false
+  lastUnlocked = state.unlocked
+  const sheetKind = state.sheet?.kind || null
+  const enteringSheet = sheetKind !== null && sheetKind !== lastSheetKind
+  lastSheetKind = sheetKind
+  const newToasts = state.toasts.filter((t) => !seenToasts.has(t.id))
+  for (const t of state.toasts) seenToasts.add(t.id)
+  for (const id of [...seenToasts]) if (!state.toasts.some((t) => t.id === id)) seenToasts.delete(id)
+
+  if (needsRedraw("status", `${state.unlocked}|${state.shade}|${tileSignature(state)}`)) renderStatusBar(L.status, state)
+  if (needsRedraw("home", of([state.page, state.theme, state.media.playing, state.media.title, unread, missed, tileSignature(state)]))) {
+    renderHome(L.home, state)
+  }
+  if (needsRedraw("app", of([state.app, state.threads, state.calls, state.contacts, state.media.playing, state.theme]), enteringApp)) {
+    renderApp(L.app, state, { enter: enteringApp })
+  }
+  if (needsRedraw("pill", `${!!state.app}`)) renderPill(L.pill, state)
+  if (needsRedraw("drawer", of([state.drawer, unread, missed]))) renderDrawer(L.drawer, state, { focus: state.drawer })
+  if (needsRedraw("switcher", of([state.switcher, state.recent]))) renderSwitcher(L.switcher, state)
+  if (needsRedraw("shade", of([state.shade, state.notifications, state.tiles, state.brightness, state.volume, state.shadePage, state.battery]))) {
+    renderShade(L.shade, state, { setShade })
+  }
+  if (needsRedraw("lock", of([state.unlocked, state.pinOpen, state.pinBuffer, state.notifications, state.media.playing]), enteringLock)) {
+    renderLock(L.lock, state, { enter: enteringLock })
+  }
+  if (needsRedraw("toasts", of([state.toasts.map((t) => t.id), newToasts.map((t) => t.id)]))) {
+    renderToasts(L.toasts, state, { entering: new Set(newToasts.map((t) => t.id)) })
+  }
+  if (needsRedraw("sheets", of([state.sheet, state.theme, state.wallpaper]), enteringSheet)) {
+    renderSheets(L.sheets, state, { enter: enteringSheet })
+  }
 
   document.body.dataset.screen = !state.unlocked
     ? "lock"

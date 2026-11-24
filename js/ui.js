@@ -11,7 +11,6 @@ export function avatar(contact, { large = false, name } = {}) {
   const label = name || contact?.name || contact?.address || "?"
   const ink = AVATAR_INKS[hashHue(label) % AVATAR_INKS.length]
   const isNumber = /^\+?[\d\s()-]+$/.test(label)
-  const text = isNumber ? label.replace(/\D/g, "").slice(-2) : initials(label)
   return h(
     "div",
     {
@@ -19,7 +18,7 @@ export function avatar(contact, { large = false, name } = {}) {
       style: { background: `var(${ink})` },
       "aria-hidden": "true",
     },
-    text,
+    isNumber ? h("span", { html: icon("phone", { size: large ? 44 : 30, stroke: 1.8 }) }) : initials(label),
   )
 }
 

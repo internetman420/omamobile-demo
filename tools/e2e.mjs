@@ -326,6 +326,25 @@ async function main() {
   check("back returns to the list", await evaluate("!!document.querySelector('.thread-row')"))
 
   console.log("\nThe pill")
+  // A redraw of the same screen must not replay the app's entrance: the node
+  // the finger sees has to stay the same one.
+  await evaluate("window.__appNode = document.querySelector('.app')")
+  await evaluate("window.__omaDemo.store.set({ page: 1 })")
+  await sleep(200)
+  check(
+    "a redraw elsewhere leaves the app alone",
+    await evaluate("window.__appNode === document.querySelector('.app')"),
+    JSON.stringify(await evaluate("({ app: window.__omaDemo.store.get().app?.id, kids: document.getElementById('app-layer').childElementCount })")),
+  )
+  await evaluate("window.__omaDemo.store.set({ page: 0 })")
+  // A real content change, which does redraw the app layer.
+  await evaluate("const st = window.__omaDemo.store; st.set({ threads: st.get().threads.map((t, i) => (i === 0 ? { ...t, unread: t.unread + 1 } : t)) })")
+  await sleep(250)
+  check(
+    "a redraw of the app itself does not replay its entrance",
+    await evaluate("!document.querySelector('.app').classList.contains('app--enter')"),
+    await evaluate("document.querySelector('.app').className"),
+  )
   await tap("#pill-strip")
   check("tapping the pill goes home", (await screen()) === "home", await screen())
 
@@ -338,6 +357,9 @@ async function main() {
   await tap("#shade .tile")
   check("tapping a tile toggles it", (await evaluate(`document.querySelector('#shade .tile[aria-pressed]').getAttribute('aria-pressed')`)) !== beforeDnd)
   await tap("#shade .tile") // put it back
+  await drag("#sliders .slider:first-child .slider__track", [0.1, 0.5], [0.75, 0.5])
+  const brightness = await evaluate("window.__omaDemo.store.get().brightness")
+  check("dragging the brightness slider moves it", Number.isFinite(brightness) && brightness > 55 && brightness < 85, String(brightness))
   await drag("#shade-panel", [0.5, 0.97], [0.5, 0.2])
   check("dragging the handle up closes it", (await screen()) === "home", await screen())
   check("tapping the wallpaper closes the shade", (await screen()) === "home", await screen())
@@ -431,7 +453,7 @@ async function main() {
   await sleep(1200)
   const controlledNow = await evaluate("!!navigator.serviceWorker.controller")
   check("the service worker controls the page offline", controlledNow)
-  const offline = await evaluate(`caches.open('oma-demo-v2').then((c) => c.keys()).then((k) => k.some((r) => r.url.endsWith('js/main.js')))`)
+  const offline = await evaluate(`caches.open('oma-demo-v4').then((c) => c.keys()).then((k) => k.some((r) => r.url.endsWith('js/main.js')))`)
   check("with the shell precached", offline)
   await s("Emulation.setTouchEmulationEnabled", { enabled: false })
   await s("Emulation.setDeviceMetricsOverride", { width: 1500, height: 1000, deviceScaleFactor: 1, mobile: false })

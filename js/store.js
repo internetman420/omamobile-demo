@@ -3,7 +3,7 @@
 // writes here; a microtask-batched subscription redraws what changed.
 
 import * as demo from "./data.js"
-import { storage } from "./util.js"
+import { formatPhone, storage } from "./util.js"
 import { DEFAULT_THEME } from "./themes.generated.js"
 
 const SAVE_KEY = "state"
@@ -171,7 +171,7 @@ export function titleForThread(thread) {
 
 export function titleForCall(call) {
   const contact = call.contactId ? contactById(call.contactId) : null
-  return contact?.name || call.address
+  return contact?.name || formatPhone(call.address || "")
 }
 
 // ---- actions --------------------------------------------------------------

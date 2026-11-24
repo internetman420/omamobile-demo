@@ -92,6 +92,8 @@ for (const [name, hash] of routes) {
     "--headless=new",
     "--disable-gpu",
     "--hide-scrollbars",
+    // Stills, not a film: the phone's transitions collapse to their end state.
+    "--force-prefers-reduced-motion",
     "--force-device-scale-factor=1",
     MOBILE ? "--window-size=360,780" : "--window-size=1500,1000",
     ...(MOBILE ? ["--force-device-scale-factor=2"] : []),

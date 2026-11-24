@@ -9,7 +9,7 @@ import { store, toggleTile, openNotification, dismissNotification, clearNotifica
 import { attachDrag } from "./gestures.js"
 import { battery, notificationCard } from "./ui.js"
 
-function slider({ label, value, onInput, iconName }) {
+function slider({ label, value, onCommit, iconName }) {
   const track = h(
     "div",
     { class: "slider__track", role: "slider", tabindex: "0", "aria-label": label, "aria-valuenow": String(value), "aria-valuemin": "0", "aria-valuemax": "100" },
@@ -17,27 +17,34 @@ function slider({ label, value, onInput, iconName }) {
     h("div", { class: "slider__knob", style: { left: `${value}%` } }),
   )
   const valueEl = h("div", { class: "slider__value" }, `${Math.round(value)}`)
+  let current = value
 
+  // The drag moves the thumb; only the release writes to the store. Writing
+  // on every move would redraw (and therefore replace) the track under the
+  // finger, which is both janky and wrong.
   const apply = (clientX) => {
     const rect = track.getBoundingClientRect()
+    if (!rect.width) return
     const ratio = clamp((clientX - rect.left) / rect.width, 0, 1)
-    const next = Math.round(ratio * 100)
-    track.querySelector(".slider__fill").style.width = `${next}%`
-    track.querySelector(".slider__knob").style.left = `${next}%`
-    valueEl.textContent = String(next)
-    onInput(next)
+    current = Math.round(ratio * 100)
+    track.querySelector(".slider__fill").style.width = `${current}%`
+    track.querySelector(".slider__knob").style.left = `${current}%`
+    track.setAttribute("aria-valuenow", String(current))
+    valueEl.textContent = String(current)
   }
 
   attachDrag(track, {
+    axis: "x",
     onStart: ({ event }) => apply(event.clientX),
     onMove: ({ event }) => apply(event.clientX),
-    axis: "x",
+    onEnd: () => onCommit(current),
   })
   track.addEventListener("keydown", (event) => {
     const step = event.key === "ArrowRight" ? 5 : event.key === "ArrowLeft" ? -5 : 0
     if (!step) return
     event.preventDefault()
-    onInput(clamp(value + step, 0, 100))
+    current = clamp(current + step, 0, 100)
+    onCommit(current)
   })
 
   return h(
@@ -123,8 +130,8 @@ export function renderShade(el, state, { setShade }) {
         h(
           "div",
           { class: "sliders", id: "sliders" },
-          slider({ label: "Brightness", value: state.brightness, iconName: "brightness", onInput: (v) => store.set({ brightness: v }) }),
-          slider({ label: "Volume", value: state.volume, iconName: "volume", onInput: (v) => store.set({ volume: v }) }),
+          slider({ label: "Brightness", value: state.brightness, iconName: "brightness", onCommit: (v) => store.set({ brightness: v }) }),
+          slider({ label: "Volume", value: state.volume, iconName: "volume", onCommit: (v) => store.set({ volume: v }) }),
         ),
         h("div", { class: "shade__handle", id: "shade-handle" }, h("span")),
       ),
